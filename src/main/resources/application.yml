@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: kafka-order-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    hikari:
+      maximum-pool-size: 20
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        default_schema: public
+        format_sql: true
+      jakarta.persistence.schema-generation.database.action: update
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
+      username: ${SPRING_REDIS_USERNAME:}
+      ssl:
+        enabled: ${SPRING_REDIS_SSL_ENABLED:false}
+  cache:
+    type: redis
+
+server:
+  error:
+    include-stacktrace: never
+    include-message: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus,caches
+  metrics:
+    tags:
+      application: kafka-order-service
+
+rate-limit:
+  enabled: ${RATE_LIMIT_ENABLED:true}
+  limit: ${RATE_LIMIT_LIMIT:10}
+  window-size: ${RATE_LIMIT_WINDOW_SIZE:60s}

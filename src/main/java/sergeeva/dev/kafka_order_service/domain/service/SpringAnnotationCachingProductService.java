@@ -3,6 +3,8 @@ package sergeeva.dev.kafka_order_service.domain.service;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import sergeeva.dev.kafka_order_service.api.product.ProductCreateRequest;
 import sergeeva.dev.kafka_order_service.api.product.ProductUpdateRequest;
@@ -13,7 +15,7 @@ import sergeeva.dev.kafka_order_service.domain.db.ProductRepository;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DbProductService implements ProductService {
+public class SpringAnnotationCachingProductService implements ProductService {
 
     private final ProductRepository productRepository;
 
@@ -28,6 +30,10 @@ public class DbProductService implements ProductService {
         return productRepository.save(product);
     }
 
+    @CacheEvict(
+            value = "product",
+            key = "#id"
+    )
     @Override
     public @Nullable ProductEntity update(Long id, ProductUpdateRequest updateRequest) {
         log.info("Updating product in DB: {}", id);
@@ -46,6 +52,10 @@ public class DbProductService implements ProductService {
         return productRepository.save(product);
     }
 
+    @Cacheable(
+            value = "product",
+            key = "#id"
+    )
     @Override
     @Nullable
     public ProductEntity getById(Long id) {
@@ -54,6 +64,10 @@ public class DbProductService implements ProductService {
                 .orElse(null);
     }
 
+    @CacheEvict(
+            value = "product",
+            key = "#id"
+    )
     @Override
     public void delete(Long id) {
         log.info("Deleting product from DB: {}", id);
