@@ -38,7 +38,7 @@ public class ProductUpdateLockingController {
         String lockId = redisLockManager.tryLock(lockKey, Duration.ofMinutes(1));
         if (lockId == null) {
             throw new ResponseStatusException(HttpStatus.LOCKED,
-                    "Is already locked, try again later: key %".formatted(lockKey));
+                    "Is already locked, try again later: key" + lockKey);
         }
 
         try {
